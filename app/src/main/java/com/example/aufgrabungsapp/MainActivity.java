@@ -63,7 +63,7 @@ import java.util.concurrent.ExecutionException;
 
 import static com.esri.core.geometry.GeometryEngine.project;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements AsyncResponse{
 
     // Storage Permissions
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
@@ -148,34 +148,40 @@ public class MainActivity extends AppCompatActivity {
     //************************ Load and Display Aufgrabungen ***************************
 
     /**
-     * after verify Permissions, download Shape.zip and display it
+     * after verify Permissions, download Shape.zip
      */
     private void loadAndDisplayAufgrabungen() {
         if (verifyStoragePermissions(this)) {
             df = new DownloadUnzipFile();
-            try {
-                //get Path
-                String shapeData = (String) df.execute(this).get();
-                //display
-                shapefileTable = new ShapefileFeatureTable(shapeData);
-                featureLayer = new FeatureLayer(shapefileTable);
-                SimpleLineSymbol polygonOutline = new SimpleLineSymbol(Color.RED, 2, SimpleLineSymbol.STYLE.SOLID);
-                featureLayer.setRenderer(new SimpleRenderer(new SimpleFillSymbol(Color.RED).setOutline(polygonOutline)));
+            df.delegatResult = this;
+            df.execute(this);
+        }
+    }
 
-                featureLayer.setMaxScale(0);
-                featureLayer.setMinScale(300000);
-                featureLayer.setVisible(true);
+    /**
+     * display aufgrabungen
+     * @param output
+     */
+    @Override
+    public void downloadFinish(String output) {
+        try {
+            //get Path
+            String shapeData = output;
+            //display
+            shapefileTable = new ShapefileFeatureTable(shapeData);
+            featureLayer = new FeatureLayer(shapefileTable);
+            SimpleLineSymbol polygonOutline = new SimpleLineSymbol(Color.RED, 2, SimpleLineSymbol.STYLE.SOLID);
+            featureLayer.setRenderer(new SimpleRenderer(new SimpleFillSymbol(Color.RED).setOutline(polygonOutline)));
 
-                mMapView.addLayer(featureLayer);
+            featureLayer.setMaxScale(0);
+            featureLayer.setMinScale(300000);
+            featureLayer.setVisible(true);
 
-                setListenerToGetFeatureInfo();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
+            mMapView.addLayer(featureLayer);
+
+            setListenerToGetFeatureInfo();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
         }
     }
 
@@ -486,6 +492,8 @@ public class MainActivity extends AppCompatActivity {
         intent.putExtra(Constants.LOCATION_DATA_EXTRA, address);
         startService(intent);
     }
+
+
 
     /**
      * Innerclass to receive Result from geocoder

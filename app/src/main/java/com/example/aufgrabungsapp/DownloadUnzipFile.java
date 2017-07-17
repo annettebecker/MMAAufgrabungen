@@ -1,7 +1,6 @@
 package com.example.aufgrabungsapp;
 
 /**
- * Created by Annette on 10.06.2017.
  * according: https://stackoverflow.com/questions/9324103/download-and-extract-zip-file-in-android
  * according: https://stackoverflow.com/questions/23056804/android-java-how-to-download-zip-file-from-url
  */
@@ -24,14 +23,15 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 
-public class DownloadUnzipFile extends AsyncTask{
+public class DownloadUnzipFile  extends AsyncTask <Object, Integer, String>{
 
     File file;
     File SDCardRoot = Environment.getExternalStorageDirectory();
     MainActivity mainActivity;
+    public AsyncResponse delegatResult = null;
 
     @Override
-    protected Object doInBackground(Object[] params) {
+    protected String doInBackground(Object[] params) {
         mainActivity = (MainActivity)params[0];
         //start download
         boolean downloadEnd = download();
@@ -159,6 +159,16 @@ public class DownloadUnzipFile extends AsyncTask{
             e.printStackTrace();
 
         }
+    }
+
+
+    /**
+     * deliver result
+     * @param result
+     */
+    @Override
+    protected void onPostExecute(String result){
+        delegatResult.downloadFinish(result);
     }
 
 }
