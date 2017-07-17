@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">AufgrabungsApp</string>
+    <string name="adresseErfolgreich">Adresssuche erfolgreich: \n</string>
+    <string name="ErrorGeocoder">Geocoder nicht erreichbar</string>
+    <string name="ErrorAddress">Adresse nicht valide</string>
+    <string name="ErrorCoordinates">Keine Koordinaten gefunden</string>
+    <string name="sachdaten">Sachdaten</string>
+
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="source">© GeoBasis-DE http://www.bkg.bund.de 2017, Stadt Münster</string>
+</resources>
